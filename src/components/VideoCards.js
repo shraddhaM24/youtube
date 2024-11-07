@@ -19,4 +19,12 @@ const VideoCards = ({info}) => {
   )
 }
 
+export const RedBorderVideoCard = ({info}) => {
+  return (
+    <div className='p-1 m-1 border border-red-500'>
+      <VideoCards info={info} /> 
+    </div>
+  )
+}
+
 export default VideoCards
