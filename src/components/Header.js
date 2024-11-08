@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toggleMenu } from '../utilis/appSlice';
 import { YOUTUBE_SEARCH_API } from '../utilis/constants';
 import { cacheResult } from '../utilis/searchSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [searchQuery,setSearchQuery] = useState("");
   const [suggestions,setSuggestions] = useState([]);
   const [showSuggestions,setShowSuggestions] = useState(false);
@@ -41,10 +43,12 @@ const Header = () => {
     dispatch(toggleMenu());
   }
 
-  // const handleSuggestionClick = (suggestion) => {
-  //   setSearchQuery(suggestion);
-  //   setShowSuggestions(false);
-  // }
+  const handleSuggestionClick = (suggestion) => {
+    const formattedSuggestion = suggestion.replace(/ /g, '+');
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    navigate(`/search/${formattedSuggestion}`);
+  }
 
   return (
     <div className='grid grid-flow-col p-2 m-5 shadow-lg'>
@@ -61,7 +65,7 @@ const Header = () => {
           <input className='px-5 w-1/2 p-2 border border-gray-400 rounded-l-full' type="text" 
           value={searchQuery} 
           onFocus={() => setShowSuggestions(true)}
-          onBlur={() => setShowSuggestions(false)}
+          // onBlur={() => setShowSuggestions(false)}
           onChange={(e) => setSearchQuery(e.target.value)}
           />
           <button className='border border-gray-400 p-2 rounded-r-full'>Search</button>
@@ -69,10 +73,12 @@ const Header = () => {
         {showSuggestions && (
         <div className='fixed bg-white py-2 px-2 w-[37rem] rounded-lg shadow-lg border-gray-100 '>
           <ul>
-            {
+            { suggestions.length ? (
               suggestions.map(s => <div key={s} className='py-2 px-3 shadow-sm hover:bg-gray-100'
-                // onClick={() => handleSuggestionClick(suggestions)}
-              >🔍 {s}</div>)
+                onClick={() => handleSuggestionClick(s)}
+              >🔍 {s}</div>)) : (
+                <div className="p-2 text-gray-500">No suggestions found</div>
+              )
             }
           </ul>
         </div>)}
